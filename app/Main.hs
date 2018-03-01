@@ -12,7 +12,7 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    [f] -> do
+    [f, o] -> do
       x <- T.readFile f
       case parse x of
         Right ws -> do
@@ -20,5 +20,6 @@ main = do
           mapM_ print ir
           let asm = assemble ir
           T.putStrLn asm
+          T.writeFile o asm 
         Left err -> putStrLn $ "Parse error: " ++ err
     _ -> putStrLn "usage: [forth.fs]"
