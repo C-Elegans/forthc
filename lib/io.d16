@@ -1,0 +1,44 @@
+.global
+_print_hex: ;r0 - int to print
+    mov r1,hex_string
+    mov r3,4
+    add r1,5
+1:
+    mov r2,r0
+    and r2,0xf
+    ld.b r2,[r2+hexdata]
+    st.b [r1],r2
+    sub r1,1
+    shr r0,4
+    sub r3,1
+    jmp.ne 1b
+
+    mov r0,hex_string
+    jmp _puts
+
+hex_string:
+    .asciz "0x    \n"
+hexdata: ;ascii hex constants
+	.ascii "0123456789ABCDEF"
+
+.global
+_putc:
+    ld.b r1,[0xff03]
+    test r1,1
+    jmp.eq _putc
+	st.b [0xff02],r0
+	ret
+.global
+_puts:
+	ld.b r1,[r0]
+	test r1,r1
+	jmp.eq 1f
+2:
+    ld.b r2,[0xff03]
+    test r2,1
+    jmp.eq 2b
+	st.b [0xff02],r1
+	add r0,1
+	jmp _puts
+1:
+	ret
