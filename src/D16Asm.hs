@@ -57,6 +57,8 @@ assembleNode (Label l) = tell $ fromLabel l <> ":\n"
 assembleNode (JmpZ l r) = do
   tell $ "\ttest " <> (reg r) <> ", " <> (reg r) <> "\n"
   tell $ "\tjmp.eq " <> fromLabel l <> "\n"
+assembleNode (Jmp l) = do
+  tell $ "\tjmp " <> fromLabel l <> "\n"
 assembleNode (Op Mul r1 r2 r3)
   | r1 == (R 0) && r2 == r1 && r3 == (R 1) =
       tell $ "\tcall _mul\n"

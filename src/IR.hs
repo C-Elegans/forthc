@@ -31,7 +31,7 @@ data ArithOp = Add | Sub | Mul | Div | And | Or | Xor
   deriving(Show, Eq)
 data StackOp = Dup | Drop | Swap
   deriving(Show, Eq)
-data ControlOp = Begin | Until
+data ControlOp = Begin | Until | If | Else | Then
   deriving(Show, Eq)
 
 arithmap :: [(T.Text, ArithOp)]
@@ -39,7 +39,7 @@ arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor",
 stackmap :: [(T.Text, StackOp)]
 stackmap = [("dup", Dup), ("drop", Drop)]
 controlmap :: [(T.Text, ControlOp)]
-controlmap = [("begin", Begin), ("until", Until)]
+controlmap = [("begin", Begin), ("until", Until), ("if", If), ("else", Else), ("then", Then)]
 prims =
   let arith = map (\(s,a) -> (s, ArithOp a)) arithmap
       stack = map (\(s,a) -> (s, StackOp a)) stackmap

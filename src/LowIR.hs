@@ -81,9 +81,11 @@ resolveLabels = mapM labelWord
 
 labelWord :: LowWord -> State LabelState LowWord
 labelWord w = do
-  lir <- mapM labelNode (lowir w)
-  let lir' = concat lir
-  return $ w {lowir=lir'}
+  loop <- mapM labelLoop (lowir w)
+  let loop' = concat loop
+  ifs <- mapM labelIf (reverse loop')
+  let ifs' = concat $ reverse ifs
+  return $ w {lowir=ifs'}
 
 freshlabel :: State LabelState Label
 freshlabel = do
@@ -97,16 +99,41 @@ pop :: State LabelState (ControlOp, Label)
 pop =
   state (\ LS {stack=t:st, curLabel=cl} -> (t, LS {stack=st, curLabel=cl}))
 
-labelNode :: LIR -> State LabelState [LIR]
-labelNode (Control Begin) = do
+labelLoop :: LIR -> State LabelState [LIR]
+labelLoop (Control Begin) = do
   label <- freshlabel
   push (Begin, label)
   return [Label label]
-labelNode (Control Until) = do
+labelLoop (Control Until) = do
   (co, label) <- pop
   case co of
     Begin -> return [Pop (R 0), JmpZ label (R 0)]
     _ -> return $ error "Expecting to close a Begin"
   
-labelNode x = return [x]
+labelLoop x = return [x]
               
+labelIf :: LIR -> State LabelState [LIR]
+labelIf (Control Then) = do
+  label <- freshlabel
+  push (Then, label)
+  return [Label label]
+labelIf (Control If) = do
+  (co, label) <- pop
+  case co of
+    Then -> return [Pop (R 0), JmpZ label (R 0)]
+    Else -> do
+      (co2, thenlabel) <- pop
+      case co2 of
+        Then -> return [Pop (R 0), JmpZ label (R 0)]
+        _ -> error $ "Mismatched If Else Then"
+    _ -> error $ "Mismatched If Then"
+labelIf (Control Else) = do
+  (co, label) <- pop
+  case co of
+    Then -> do
+      mylabel <- freshlabel
+      push (co, label)
+      push (Else, mylabel)
+      return [Jmp label, Label mylabel]
+    _ -> error $ "Mismatched If Then"
+labelIf l = return [l]
