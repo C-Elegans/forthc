@@ -20,7 +20,7 @@ main = do
       let inp = core `T.append` x
       case parse inp of
         Right ws -> do
-          let ir = lower $ convert ws
+          let ir = lower $ opt $ convert ws
           mapM_ print ir
           let optir = optlow ir
           mapM_ print optir

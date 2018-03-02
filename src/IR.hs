@@ -14,7 +14,7 @@ import qualified Data.Text as T
 data IRWord = IRWord { irname :: T.Text
                      , ir  :: [IR]
                      }
-  deriving(Show)
+  deriving(Show, Eq)
 
 data IR = PushNum Int
         | PrimOp Prim

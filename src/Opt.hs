@@ -1,7 +1,9 @@
-{-# LANGUAGE DuplicateRecordFields #-}
+{-# LANGUAGE DuplicateRecordFields, OverloadedStrings #-}
 module Opt where
 import Control.Monad.State
 import IR
+import Data.List (union)
+import qualified Data.Text as T
 import Debug.Trace(trace)
 
 data StackVal = Const Int
@@ -25,7 +27,9 @@ clearstack = modify' (\s -> s{stack=[]})
 type Opt = State Stack
 
 opt :: [IRWord] -> [IRWord]
-opt = map (optIrWord)
+opt = runOpt . trim
+  where runOpt = map (optIrWord)
+  
 
 rundeletions :: Int -> [Int] -> [IR] -> [IR]
 rundeletions i dels (ir:rest) =
@@ -92,3 +96,24 @@ optword i p@(PrimOp (StackOp Drop)) = do
 optword _ x = do
   clearstack
   return x
+
+
+trim :: [IRWord] -> [IRWord]
+trim words =
+  let wordmap = map (\w -> (irname w, w)) words
+      allused = usedWords "main" wordmap
+  in allused
+
+usedWords :: T.Text -> [(T.Text, IRWord)] -> [IRWord]
+usedWords name words =
+  case lookup name words of
+    Nothing -> error $ (T.unpack name) ++ " not defined"
+    Just word ->
+      let used = map (getUsed words) (IR.ir word)
+      in  word:(foldl1 (union) used)
+                          
+  where
+    getUsed :: [(T.Text, IRWord)] -> IR -> [IRWord]
+    getUsed words (NamedWord n) = usedWords n words
+    getUsed words _ = []
+    
