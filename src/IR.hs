@@ -5,6 +5,7 @@ module IR
   , Prim(..)
   , ArithOp(..)
   , StackOp(..)
+  , ControlOp(..)
   , convert) where
 
 import Parse
@@ -23,21 +24,27 @@ data IR = PushNum Int
 
 data Prim = ArithOp ArithOp
             | StackOp StackOp
+            | ControlOp ControlOp
             deriving(Show, Eq)
 
 data ArithOp = Add | Sub | Mul | Div | And | Or | Xor
   deriving(Show, Eq)
 data StackOp = Dup | Drop | Swap
   deriving(Show, Eq)
+data ControlOp = Begin | Until
+  deriving(Show, Eq)
 
 arithmap :: [(T.Text, ArithOp)]
 arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor", Xor)]
 stackmap :: [(T.Text, StackOp)]
 stackmap = [("dup", Dup), ("drop", Drop)]
+controlmap :: [(T.Text, ControlOp)]
+controlmap = [("begin", Begin), ("until", Until)]
 prims =
   let arith = map (\(s,a) -> (s, ArithOp a)) arithmap
       stack = map (\(s,a) -> (s, StackOp a)) stackmap
-  in arith ++ stack 
+      control = map (\(s,a) -> (s, ControlOp a)) controlmap
+  in arith ++ stack ++ control
 
 
 convert :: [WordDef] -> [IRWord]
