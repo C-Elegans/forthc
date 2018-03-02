@@ -43,12 +43,20 @@ opStr And = "and"
 opStr Or = "or"
 opStr Xor = "xor"
 
+fromLabel :: Label -> T.Text
+fromLabel (L l) = "_Z" <> lit l
+
 assembleNode :: LIR -> Asm ()
 assembleNode (Call t) = tell $ "\tcall " <> (escape t) <> "\n"
 assembleNode (Emit t) = tell $ t <> "\n"
 assembleNode (PushLit x) = tell $ "\tpush " <> (lit x) <> ", r6" <> "\n"
 assembleNode (Pop r) = tell $ "\tpop " <> (reg r) <> ", r6" <> "\n"
+assembleNode (Peek r) = tell $ "\tld " <> (reg r) <> ", [r6]\n"
 assembleNode (PushR r) = tell $ "\tpush " <> (reg r) <> ", r6" <> "\n"
+assembleNode (Label l) = tell $ fromLabel l <> ":\n"
+assembleNode (JmpZ l r) = do
+  tell $ "\ttest " <> (reg r) <> ", " <> (reg r) <> "\n"
+  tell $ "\tjmp.eq " <> fromLabel l <> "\n"
 assembleNode (Op Mul r1 r2 r3)
   | r1 == (R 0) && r2 == r1 && r3 == (R 1) =
       tell $ "\tcall _mul\n"

@@ -1,10 +1,13 @@
 : main 0
        begin
-	 1 -
+	 1 +
 	 dup
-	 < 1
+	 dup
+	 .
+	 10 >
 	 until
     ; 
+
 
 
 

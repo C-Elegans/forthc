@@ -20,13 +20,14 @@ data Label = L Int
 data LIR = PushLit Int
          | PushR Register
          | Pop Register
+         | Peek Register
          | Mov Register Register
          | Movl Register Int
          | Op ArithOp Register Register Register
          | Opl ArithOp Register Int
          | Label Label
          | Jmp Label 
-         | JmpNZ Label
+         | JmpZ Label Register
          | Control ControlOp
          | Call T.Text
          | Emit T.Text
@@ -57,13 +58,12 @@ lowerIr :: IR -> Writer Program ()
 lowerIr (PushNum x) = emit $ PushLit x
 lowerIr (NamedWord s) = emit $ Call s
 lowerIr (PrimOp (ArithOp op)) = do
-  emit $ Pop (R 0)
   emit $ Pop (R 1)
+  emit $ Pop (R 0)
   emit $ Op op (R 0) (R 0) (R 1)
   emit $ PushR (R 0)
 lowerIr (PrimOp (StackOp Dup)) = do
-  emit $ Pop (R 0)
-  emit $ PushR (R 0)
+  emit $ Peek (R 0)
   emit $ PushR (R 0)
 lowerIr (PrimOp (StackOp Drop)) = do
   emit $ Pop (R 0)
@@ -90,9 +90,23 @@ freshlabel = do
   li <- state (\s -> (curLabel s, s {curLabel=(curLabel s)+1}))
   return $ L li
 
+push :: (ControlOp,Label) -> State LabelState ()
+push item =
+  modify (\s -> s {stack=item:(stack s)})
+pop :: State LabelState (ControlOp, Label)
+pop =
+  state (\ LS {stack=t:st, curLabel=cl} -> (t, LS {stack=st, curLabel=cl}))
+
 labelNode :: LIR -> State LabelState [LIR]
 labelNode (Control Begin) = do
   label <- freshlabel
+  push (Begin, label)
   return [Label label]
+labelNode (Control Until) = do
+  (co, label) <- pop
+  case co of
+    Begin -> return [Pop (R 0), JmpZ label (R 0)]
+    _ -> return $ error "Expecting to close a Begin"
+  
 labelNode x = return [x]
               
