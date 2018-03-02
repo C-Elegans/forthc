@@ -13,10 +13,17 @@
     drop
   then
 ;
-: main 0
-       9 testif
-       12 testif
-       30 testif
+: main 
+  0
+  begin
+    dup
+    .
+    1 +
+    dup
+    30 delay-ms
+    256 >
+  until
+  
     ; 
 
 

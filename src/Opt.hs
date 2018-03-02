@@ -77,14 +77,18 @@ optword i p@(PrimOp (ArithOp Add)) = do
       push (Const val) [i]
       delete $ i1++i2
       return (PushNum val)
-    _ -> return p
+    _ -> do
+      clearstack
+      return p
 optword i p@(PrimOp (ArithOp _)) = do
   s <- get
   case (stack s) of
     ((_, i1):(_, i2):rest) -> do
       push Bot $ [i] ++ i1 ++ i2
       return p
-    _ -> return p
+    _ -> do
+      clearstack
+      return p
 optword i p@(PrimOp (StackOp Drop)) = do
   s <- get
   case (stack s) of
@@ -92,7 +96,9 @@ optword i p@(PrimOp (StackOp Drop)) = do
                    delete is
                    delete [i]
                    return p
-    _ -> return p
+    _ ->do
+      clearstack
+      return p
 optword _ x = do
   clearstack
   return x
