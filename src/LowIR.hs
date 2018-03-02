@@ -12,14 +12,17 @@ instance Show LowWord where
     let strs = map show l
     in  (T.unpack n) ++ ":\n\t" ++ (concat (intersperse "\n\t" strs)) ++ "\n"
 data Register = R Int
-              deriving (Show)
+              deriving (Show, Eq)
 data LIR = PushLit Int
          | PushR Register
          | Pop Register
+         | Mov Register Register
+         | Movl Register Int
          | Op ArithOp Register Register Register
+         | Opl ArithOp Register Int
          | Call T.Text
          | Emit T.Text
-         deriving (Show)
+         deriving (Show, Eq)
                          
 type Program = [LIR]
 
@@ -48,6 +51,12 @@ lowerIr (PrimOp (ArithOp op)) = do
   emit $ Pop (R 1)
   emit $ Op op (R 0) (R 0) (R 1)
   emit $ PushR (R 0)
+lowerIr (PrimOp (StackOp Dup)) = do
+  emit $ Pop (R 0)
+  emit $ PushR (R 0)
+  emit $ PushR (R 0)
+lowerIr (PrimOp (StackOp Drop)) = do
+  emit $ Pop (R 0)
 lowerIr (IR.Emit t) = emit $ LowIR.Emit t
 lowerIr _ = tell []
 

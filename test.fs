@@ -1,15 +1,4 @@
-: main 1 1 + . ;
+: main 2 2 >= . 2 2 <= . 1 2 <= . 2 1 <= . ;
 
-: test
-    [ ld r0, [r6] |]
-    [ push r0, r6 |]
-    ;
 
-: .
-  [
-  pop r0, r6
-  call _print_hex
 
-  |]
-  ;
- 

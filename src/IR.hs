@@ -19,19 +19,19 @@ data IR = PushNum Int
         | PrimOp Prim
         | NamedWord T.Text
         | Emit T.Text
-        deriving(Show)
+        deriving(Show, Eq)
 
 data Prim = ArithOp ArithOp
             | StackOp StackOp
-            deriving(Show)
+            deriving(Show, Eq)
 
-data ArithOp = Add | Sub | Mul | Div 
-  deriving(Show)
+data ArithOp = Add | Sub | Mul | Div | And | Or | Xor
+  deriving(Show, Eq)
 data StackOp = Dup | Drop | Swap
-  deriving(Show)
+  deriving(Show, Eq)
 
 arithmap :: [(T.Text, ArithOp)]
-arithmap = [("+", Add), ("-", Sub)]
+arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor", Xor)]
 stackmap :: [(T.Text, StackOp)]
 stackmap = [("dup", Dup), ("drop", Drop)]
 prims =

@@ -1,5 +1,5 @@
 
-main: test.o lib/io.o
+main: test.o lib/io.o lib/numeric.o
 	d16-ld $^ -o $@
 %.asm: %.fs
 	stack exec forthc-exe -- $< $@
