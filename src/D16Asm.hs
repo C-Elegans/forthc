@@ -47,7 +47,7 @@ fromLabel :: Label -> T.Text
 fromLabel (L l) = "_Z" <> lit l
 
 assembleNode :: LIR -> Asm ()
-assembleNode (Call t) = tell $ "\tcall " <> (escape t) <> "\n"
+assembleNode (Call t) = tell $ "\tcall " <> (escape t) <> "\t\t; " <> t <> "\n"
 assembleNode (Emit t) = tell $ t <> "\n"
 assembleNode (PushLit x) = tell $ "\tpush " <> (lit x) <> ", r6" <> "\n"
 assembleNode (Pop r) = tell $ "\tpop " <> (reg r) <> ", r6" <> "\n"

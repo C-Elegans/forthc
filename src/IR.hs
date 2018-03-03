@@ -35,7 +35,8 @@ data ControlOp = Begin | Until | If | Else | Then
   deriving(Show, Eq)
 
 arithmap :: [(T.Text, ArithOp)]
-arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor", Xor)]
+-- arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor", Xor)]
+arithmap = [("*", Mul)]
 stackmap :: [(T.Text, StackOp)]
 stackmap = [("dup", Dup), ("drop", Drop)]
 controlmap :: [(T.Text, ControlOp)]

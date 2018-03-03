@@ -1,3 +1,41 @@
+: + [
+    pop r1
+    pop r0
+    add r0, r1
+    push r0
+    ret
+    |] ;
+    
+: - [
+    pop r1
+    pop r0
+    sub r0, r1
+    push r0
+    ret
+    |] ;
+: and [
+    pop r1
+    pop r0
+    and r0, r1
+    push r0
+    ret
+    |] ;
+
+: or [
+    pop r1
+    pop r0
+    or r0, r1
+    push r0
+    ret
+    |] ;
+
+: xor [
+    pop r1
+    pop r0
+    xor r0, r1
+    push r0
+    ret
+    |] ;
 : /
   [
   pushlr

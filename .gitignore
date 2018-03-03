@@ -2,6 +2,7 @@
 forthc.cabal
 *~
 *.asm
+*.d16
 *.o
 main
 
