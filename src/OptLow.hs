@@ -21,5 +21,6 @@ optir ((PushR r1):(Pop r2):rest) | r1==r2 = optir rest
 optir ((PushR r1):(Pop r2):rest) = (Mov r2 r1):optir rest
 
 optir ((PushLit l):(Pop r):rest) = (Movl r l):optir rest
+optir ((Pop r1):(PushR r2):rest) | r1==r2 = (Peek r1):rest
 optir (l:ls) = l:(optir ls)
 optir [] = []
