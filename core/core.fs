@@ -123,8 +123,9 @@
 : swap {l [
        Pop (R 0),
        Pop (R 1),
-       Push (R 0),
-       Push (R 1)
+       PushR (R 0),
+       PushR (R 1)
+       ]
 } ;
 
 : >r {

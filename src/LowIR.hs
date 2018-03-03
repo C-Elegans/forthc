@@ -3,22 +3,21 @@ import IR
 import qualified Data.Text as T
 import Control.Monad.Writer
 import Control.Monad.State
-import qualified Data.Map as M
+import qualified Data.Set as S
 import Debug.Trace (trace)
 import Data.List (intersperse)
 
 data LowWord = LowWord { name :: T.Text
                        , lowir :: [LIR]
-                       , attributes :: M.Map T.Text Attr
+                       , attributes :: S.Set Attr
                        }
 instance Eq LowWord where
   lw1 == lw2 = (name lw1) == (name lw2) && (lowir lw1) == (lowir lw2)
 
-data Attr = Arity Int Int
-          | StackOnly
+data Attr = StackOnly
           | Const
           | NoAsm
-          deriving (Eq)
+          deriving (Eq, Ord)
 
 instance Show LowWord where
   show LowWord{name=n, lowir=l} =
@@ -53,7 +52,7 @@ lower irwords =
   in evalState (resolveLabels ws) LS {stack=[], curLabel=0}
   where lowerDef d =
           let lir =  execWriter (lowerIrList (ir d)) 
-          in LowWord{name=(irname d), lowir=lir, attributes=M.fromList []}
+          in LowWord{name=(irname d), lowir=lir, attributes=S.fromList []}
 
 lowerIrList :: [IR] -> Writer Program ()
 lowerIrList (ir:rest) = do

@@ -2,8 +2,10 @@
 module OptLow ( optlow )
   where
 import Control.Monad.State hiding (fix)
+import qualified Data.Set as S
 import qualified Data.Map as M
 import qualified Data.Text as T
+import Debug.Trace (trace)
 import LowIR
 
 optlow ir =
@@ -34,16 +36,16 @@ optir (l:ls) = l:(optir ls)
 optir [] = []
 
 annotate lw =
-  let stonly = mapfrom stackonly "stackonly" StackOnly lw
-      asm = mapfrom noasm "noasm" NoAsm lw
-      mp = (attributes lw) `M.union` stonly `M.union` asm
+  let stonly = mapfrom stackonly StackOnly lw
+      asm = mapfrom noasm NoAsm lw
+      mp = (attributes lw) `S.union` stonly `S.union` asm
   in lw {attributes=mp}
   where
     satisfies f lw = ((foldl (&&) True) . (map f)) (lowir lw)
-    mapfrom f str at lw = if satisfies f lw then
-                            M.fromList [(str, at)]
+    mapfrom f at lw = if satisfies f lw then
+                            S.singleton at
                           else
-                            M.empty
+                            S.empty
     stackonly (PushLit _) = True
     stackonly (Pop _) = True
     stackonly (Peek _)= True
@@ -55,8 +57,11 @@ annotate lw =
 type Inline = State InlineState
 type InlineState = M.Map T.Text LowWord
 
-shouldInline :: M.Map T.Text Attr -> Bool
-shouldInline _ = False
+shouldInline :: S.Set Attr -> Bool
+shouldInline mp =
+  let attrs = [StackOnly, NoAsm]
+      results = map (\m -> S.member m mp) attrs
+  in foldl (&&) True results
 
 inlineAll :: [LowWord] -> [LowWord]
 inlineAll lws =
@@ -73,6 +78,18 @@ inlineIr ir =
   mapM inline ir >>=
   return . concat
 
+inline :: LIR -> Inline [LIR]
+inline n@(Call t) = do
+  mp <- get
+  case M.lookup t mp of
+    Just lw ->
+      let attrs = (attributes lw)
+      in if shouldInline attrs then
+           return $ (lowir lw)
+         else
+           return [n]
+      
+    _ -> return [n]
 inline x = return [x]
 
   
