@@ -1,58 +1,58 @@
-: + [
-    pop r1
-    pop r0
+: + {
+    pop r1, r6
+    pop r0, r6
     add r0, r1
-    push r0
+    push r0, r6
     ret
-    |] ;
+    } ;
     
-: - [
-    pop r1
-    pop r0
+: - {
+    pop r1, r6
+    pop r0, r6
     sub r0, r1
-    push r0
+    push r0, r6
     ret
-    |] ;
-: and [
-    pop r1
-    pop r0
+    } ;
+: and {
+    pop r1, r6
+    pop r0, r6
     and r0, r1
-    push r0
+    push r0, r6
     ret
-    |] ;
+    } ;
 
-: or [
-    pop r1
-    pop r0
+: or {
+    pop r1, r6
+    pop r0, r6
     or r0, r1
-    push r0
+    push r0, r6
     ret
-    |] ;
+    } ;
 
-: xor [
-    pop r1
-    pop r0
+: xor {
+    pop r1, r6
+    pop r0, r6
     xor r0, r1
-    push r0
+    push r0, r6
     ret
-    |] ;
+    } ;
 : /
-  [
+  {
   pushlr
   pop r1, r6
   pop r0, r6
   call _div
   push r0, r6
   pop r0
-  jmp r0|] ;
+  jmp r0} ;
 : .
-  [
+  {
   pop r0, r6
   jmp _print_hex
-  |]
+  }
   ;
 
-: < [
+: < {
     pop r1, r6
     pop r0, r6
     cmp r0, r1
@@ -61,9 +61,9 @@
     not r0
     1:
     push r0, r6
-    ret |] ;
+    ret } ;
 
-: > [
+: > {
     pop r1, r6
     pop r0, r6
     cmp r0, r1
@@ -72,8 +72,8 @@
     not r0
     1:
     push r0, r6
-    ret |] ;
-: = [
+    ret } ;
+: = {
     pop r1, r6
     pop r0, r6
     cmp r0, r1
@@ -82,64 +82,64 @@
     not r0
     1:
     push r0, r6
-    ret |]
+    ret }
 ;
 : <> = invert ;
-: invert [
+: invert {
       pop r0, r6
       not r0
       push r0, r6
-      ret |] ;
+      ret } ;
 : >= < invert ;
 : <= > invert ;
 
-: nip [
+: nip {
       pop r0, r6
       pop r1, r6
       push r0, r6
-      ret |] ;
+      ret } ;
 
-: rot [
+: rot {
       pop r0, r6
       pop r1, r6
       pop r2, r6
       push r1, r6
       push r0, r6
       push r2, r6
-      ret |] ;
+      ret } ;
 
-: over [
+: over {
        ld r0, [r6+2]
        push r0, r6
        ret
-       |] ;
+       } ;
 
-: tuck [
+: tuck {
        pop r0, r6
        pop r1, r6
        push r0, r6
        push r1, r6
        push r0, r6
-       ret |] ;
+       ret } ;
 
-: swap [
+: swap {
        pop r0, r6
        pop r1, r6
        push r0, r6
        push r1, r6
-       ret |] ;
+       ret } ;
 
-: >r [
+: >r {
      pop r0, r6
      push r0
-     ret |] ;
+     ret } ;
 
-: r> [
+: r> {
      pop r0
      push r0, r6
-     ret |] ;
+     ret } ;
 
-: delay-ms [
+: delay-ms {
 	   pop r0, r6
 	   st [0xff06], r0
 	   1:
@@ -147,4 +147,4 @@
 	   test r0, r0
 	   jmp.ne 1b
 	   ret
-	   |] ;
+	   } ;

@@ -55,11 +55,10 @@ token = spaces >> (do
   n <- int
   return $ Number n)
   <|> do
-    char '['
+    char '{'
     spaces
-    txt <- satisfy (\c -> c /= '|')
-    char '|'
-    char ']'
+    txt <- satisfy (\c -> c /= '}')
+    char '}'
     return $ Emit txt
   <|> do
     str <- string

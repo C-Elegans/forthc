@@ -20,7 +20,7 @@
     .
     1 +
     dup
-    30 delay-ms
+    10 delay-ms
     256 >
   until
   

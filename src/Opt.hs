@@ -106,7 +106,7 @@ optword _ x = do
 
 trim :: [IRWord] -> [IRWord]
 trim words =
-  let wordmap = map (\w -> (irname w, w)) words
+  let wordmap = trace (show words) $ map (\w -> (irname w, w)) words
       allused = usedWords "main" wordmap
   in allused
 
