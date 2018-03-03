@@ -23,7 +23,7 @@ testData =
 
 
 runtest d = TestCase $
-  let w = [LowWord {LowIR.name="main", lowir=d}]
+  let w = [LowWord {LowIR.name="main", lowir=d, attributes=M.fromList []}]
       u = runStackEngine $ w
       o = runStackEngine $ optlow $ w
   in  trace ("\n" ++ show o ++ "\n" ++ show u) $ assertEqual "unopt == opt" u o

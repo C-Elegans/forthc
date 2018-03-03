@@ -2,7 +2,7 @@
     Pop (R 1),
     Pop (R 0),
     Op Add (R 0) (R 0) (R 1),
-    PushR (R 1)
+    PushR (R 0)
     ]
     } ;
     
@@ -10,28 +10,28 @@
     Pop (R 1),
     Pop (R 0),
     Op Sub (R 0) (R 0) (R 1),
-    PushR (R 1)
+    PushR (R 0)
     ]
     } ;
 : and {l [
     Pop (R 1),
     Pop (R 0),
     Op And (R 0) (R 0) (R 1),
-    PushR (R 1)
+    PushR (R 0)
     ]
     } ;
 : or {l [
     Pop (R 1),
     Pop (R 0),
     Op Or (R 0) (R 0) (R 1),
-    PushR (R 1)
+    PushR (R 0)
     ]
     } ;
 : xor {l [
     Pop (R 1),
     Pop (R 0),
     Op Xor (R 0) (R 0) (R 1),
-    PushR (R 1)
+    PushR (R 0)
     ]
     } ;
 : /
