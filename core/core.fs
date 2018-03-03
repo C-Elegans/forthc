@@ -1,40 +1,38 @@
-: + {
-    pop r1, r6
-    pop r0, r6
-    add r0, r1
-    push r0, r6
-    ret
+: + {l [
+    Pop (R 1),
+    Pop (R 0),
+    Op Add (R 0) (R 0) (R 1),
+    PushR (R 1)
+    ]
     } ;
     
-: - {
-    pop r1, r6
-    pop r0, r6
-    sub r0, r1
-    push r0, r6
-    ret
+: - {l [
+    Pop (R 1),
+    Pop (R 0),
+    Op Sub (R 0) (R 0) (R 1),
+    PushR (R 1)
+    ]
     } ;
-: and {
-    pop r1, r6
-    pop r0, r6
-    and r0, r1
-    push r0, r6
-    ret
+: and {l [
+    Pop (R 1),
+    Pop (R 0),
+    Op And (R 0) (R 0) (R 1),
+    PushR (R 1)
+    ]
     } ;
-
-: or {
-    pop r1, r6
-    pop r0, r6
-    or r0, r1
-    push r0, r6
-    ret
+: or {l [
+    Pop (R 1),
+    Pop (R 0),
+    Op Or (R 0) (R 0) (R 1),
+    PushR (R 1)
+    ]
     } ;
-
-: xor {
-    pop r1, r6
-    pop r0, r6
-    xor r0, r1
-    push r0, r6
-    ret
+: xor {l [
+    Pop (R 1),
+    Pop (R 0),
+    Op Xor (R 0) (R 0) (R 1),
+    PushR (R 1)
+    ]
     } ;
 : /
   {
@@ -122,12 +120,12 @@
        push r0, r6
        ret } ;
 
-: swap {
-       pop r0, r6
-       pop r1, r6
-       push r0, r6
-       push r1, r6
-       ret } ;
+: swap {l [
+       Pop (R 0),
+       Pop (R 1),
+       Push (R 0),
+       Push (R 1)
+} ;
 
 : >r {
      pop r0, r6

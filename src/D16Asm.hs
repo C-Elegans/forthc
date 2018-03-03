@@ -25,10 +25,23 @@ assembleWord lw = do
   tell $ (escape (name lw)) <> ":\t\t\t ;" <> (name lw) <> "\n"
   case (lowir lw) of
     [Emit t] -> assembleNode (Emit t)
-    _ -> do
-      tell $ "\tpushlr\n"
-      mapM_ assembleNode (lowir lw)
-      tell $ "\tpop r1\n\tjmp r1\n"
+    _ ->
+      case hascall (lowir lw) of
+        True -> do
+          tell $ "\tpushlr\n"
+          mapM_ assembleNode (lowir lw)
+          tell $ "\tpop r1\n\tjmp r1\n"
+        False -> do
+          mapM_ assembleNode (lowir lw)
+          tell $ "\tret\n"
+        
+hascall :: [LIR] -> Bool
+hascall = (foldl (&&) True) . (map hc)
+  where
+    hc (Call _) = True
+    hc (Emit _) = True
+    hc _ = False
+  
 
 reg :: Register -> T.Text
 reg (R r) = "r" <> lit r

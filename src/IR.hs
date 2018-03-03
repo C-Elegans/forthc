@@ -20,19 +20,20 @@ data IR = PushNum Int
         | PrimOp Prim
         | NamedWord T.Text
         | Emit T.Text
+        | EmitLow T.Text
         deriving(Show, Eq)
 
 data Prim = ArithOp ArithOp
             | StackOp StackOp
             | ControlOp ControlOp
-            deriving(Show, Eq)
+            deriving(Show, Eq, Read)
 
 data ArithOp = Add | Sub | Mul | Div | And | Or | Xor
-  deriving(Show, Eq)
+  deriving(Show, Eq, Read)
 data StackOp = Dup | Drop | Swap
-  deriving(Show, Eq)
+  deriving(Show, Eq, Read)
 data ControlOp = Begin | Until | If | Else | Then
-  deriving(Show, Eq)
+  deriving(Show, Eq, Read)
 
 arithmap :: [(T.Text, ArithOp)]
 -- arithmap = [("+", Add), ("-", Sub), ("*", Mul), ("and", And), ("or",Or), ("xor", Xor)]
@@ -58,6 +59,7 @@ convertWords = map convertWord
 convertWord :: Token -> IR
 convertWord (Number n) = PushNum n
 convertWord (Parse.Emit t) = IR.Emit t
+convertWord (Parse.EmitLow t) = IR.EmitLow t
 convertWord (Word t) =
   case lookup t prims of
     Just prim -> PrimOp prim

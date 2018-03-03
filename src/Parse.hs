@@ -17,6 +17,7 @@ data WordDef = WordDef { name :: T.Text
 data Token = Number Int
            | Word T.Text
            | Emit T.Text
+           | EmitLow T.Text
            deriving(Show)
 
 
@@ -56,13 +57,23 @@ token = spaces >> (do
   return $ Number n)
   <|> do
     char '{'
-    spaces
-    txt <- satisfy (\c -> c /= '}')
-    char '}'
-    return $ Emit txt
+    parseEmit
   <|> do
     str <- string
     return $ Word str
 
+
+parseEmit :: Parser Token
+parseEmit = (do
+      char 'l'
+      spaces
+      txt <- satisfy (\c -> c /= '}')
+      char '}'
+      return $ EmitLow txt)
+            <|> (do
+      spaces
+      txt <- satisfy (\c -> c /= '}')
+      char '}'
+      return $ Emit txt)
       
   

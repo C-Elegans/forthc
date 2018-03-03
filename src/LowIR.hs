@@ -3,6 +3,7 @@ import IR
 import qualified Data.Text as T
 import Control.Monad.Writer
 import Control.Monad.State
+import Debug.Trace (trace)
 import Data.List (intersperse)
 
 data LowWord = LowWord { name :: T.Text
@@ -14,10 +15,10 @@ instance Show LowWord where
     let strs = map show l
     in  (T.unpack n) ++ ":\n\t" ++ (concat (intersperse "\n\t" strs)) ++ "\n"
 data Register = R Int
-              deriving (Show, Eq, Ord)
+              deriving (Show, Eq, Ord, Read)
 
 data Label = L Int
-  deriving (Show, Eq)
+  deriving (Show, Eq, Read)
 data LIR = PushLit Int
          | PushR Register
          | Pop Register
@@ -32,7 +33,7 @@ data LIR = PushLit Int
          | Control ControlOp
          | Call T.Text
          | Emit T.Text
-         deriving (Show, Eq)
+         deriving (Show, Eq, Read)
                          
 type Program = [LIR]
 
@@ -69,8 +70,11 @@ lowerIr (PrimOp (StackOp Dup)) = do
 lowerIr (PrimOp (StackOp Drop)) = do
   emit $ Pop (R 0)
 lowerIr (IR.Emit t) = emit $ LowIR.Emit t
+lowerIr (IR.EmitLow t) =
+  let lir = trace (show t) $ read (T.unpack t) :: [LIR]
+  in tell $ lir
 lowerIr (PrimOp (ControlOp op)) = emit $ Control op
-lowerIr n = error $ "Now lowerIR for " ++ (show n)
+lowerIr n = error $ "No lowerIR for " ++ (show n)
 
 
 data LabelState = LS { stack ::[(ControlOp, Label)]
