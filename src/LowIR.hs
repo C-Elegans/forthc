@@ -8,12 +8,13 @@ import Data.List (intersperse)
 data LowWord = LowWord { name :: T.Text
                        , lowir :: [LIR]
                        }
+  deriving (Eq)
 instance Show LowWord where
   show LowWord{name=n, lowir=l} =
     let strs = map show l
     in  (T.unpack n) ++ ":\n\t" ++ (concat (intersperse "\n\t" strs)) ++ "\n"
 data Register = R Int
-              deriving (Show, Eq)
+              deriving (Show, Eq, Ord)
 
 data Label = L Int
   deriving (Show, Eq)
