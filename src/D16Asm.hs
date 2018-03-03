@@ -36,7 +36,7 @@ assembleWord lw = do
           tell $ "\tret\n"
         
 hascall :: [LIR] -> Bool
-hascall = (foldl (&&) True) . (map hc)
+hascall = (foldl (||) False) . (map hc)
   where
     hc (Call _) = True
     hc (Emit _) = True
